@@ -1,50 +1,64 @@
-# React + TypeScript + Vite
+# The Wild Oasis
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Wild Oasis is a React app built with Vite, TypeScript, ESLint, Supabase and Prettier. It includes a minimal setup for React, TypeScript, and Vite, along with some ESLint rules and formatting with Prettier.
 
-Currently, two official plugins are available:
+App is for small hotel with 8 luxurious wooden cabins. This is the internal application used to manage the cabins and their guests.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Main parts of the project:
 
-## Expanding the ESLint configuration
+- Internal application
+- API
+- Website to book cabins
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Main features
 
-- Configure the top-level `parserOptions` property like this:
+### Authentication employees only
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Sign up
+- Sign in
+- Sign out
+- Reset password
+- Change password
+
+### Cabins
+
+- List cabins
+- Create cabins
+- Update cabins
+- Delete cabins
+
+### Bookings
+
+- List bookings
+- Booking details
+- Booking status
+
+### Check-in and check-out
+
+- Delete check-in and check-out
+- Pay for check-in and check-out
+- Adding breakfast option for entire stay
+
+### Dashboard
+
+- List of guests check-in and check-out on the current day
+- Statistics for cabins, sales and bookings
+- Charts for cabins, sales and bookings
+
+### Settings
+
+- breakfast price
+- min and max booking days
+- max guests per booking
+
+## Installation
+
+```bash
+git clone git@github.com:michallowkiet/the-wild-oasis.git
+cd the-wild-oasis
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+#### Design by Jonas Schmedtmann [GitHub](https://github.com/jonasschmedtmann)
+#### Code by Michał Łowkiet [GitHub](https://github.com/michallowkiet)
