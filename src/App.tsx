@@ -1,33 +1,43 @@
-import { useState } from 'react';
-import './App.css';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
+import { GlobalStyles } from './styles/GlobalStyles';
+import { Button } from './ui/Button';
+import { Heading } from './ui/Heading';
+import Input from './ui/Input';
+import Row, { RowType } from './ui/Row';
+import StyledApp from './ui/StyledApp';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <GlobalStyles />
+      <StyledApp>
+        <header>
+          <Row type={RowType.vertical}>
+            <Row>
+              <Heading as="h1">The Wild Oasis</Heading>
+              <div>
+                <Heading as="h2">Check-in and Check-out</Heading>
+
+                <Button size="medium" variation="primary">
+                  Sing In
+                </Button>
+
+                <Button size="medium" variation="primary">
+                  Sing Up
+                </Button>
+              </div>
+            </Row>
+
+            <Row type={RowType.vertical}>
+              <Heading as="h3">Coming soon</Heading>
+
+              <form>
+                <Input placeholder="Search cabins" />
+                <Input placeholder="Number of Guests" />
+              </form>
+            </Row>
+          </Row>
+        </header>
+      </StyledApp>
     </>
   );
 }
