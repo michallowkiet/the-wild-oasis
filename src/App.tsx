@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Account from './pages/Account';
+import Bookings from './pages/Booking';
 import Cabins from './pages/Cabins';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -21,6 +22,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="cabins" element={<Cabins />} />
             <Route path="users" element={<Users />} />
+            <Route path="bookings" element={<Bookings />} />
             <Route path="settings" element={<Settings />} />
             <Route path="account" element={<Account />} />
             <Route path="*" element={<PageNotFound />} />

@@ -9,12 +9,19 @@ const Img = styled.img`
   width: auto;
 `;
 
-function Logo() {
+const prefersDarkColorScheme = () =>
+  window &&
+  window.matchMedia &&
+  window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+const logo = prefersDarkColorScheme() ? '/logo-dark.png' : '/logo-light.png';
+
+const Logo = () => {
   return (
     <StyledLogo>
-      <Img src="/logo-light.png" alt="Logo" />
+      <Img src={logo} alt="Logo" />
     </StyledLogo>
   );
-}
+};
 
 export default Logo;
