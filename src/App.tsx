@@ -1,43 +1,29 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Account from './pages/Account';
+import Cabins from './pages/Cabins';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import PageNotFound from './pages/PageNotFound';
+import Settings from './pages/Settings';
+import Users from './pages/Users';
 import { GlobalStyles } from './styles/GlobalStyles';
-import { Button } from './ui/Button';
-import { Heading } from './ui/Heading';
-import Input from './ui/Input';
-import Row, { RowType } from './ui/Row';
-import StyledApp from './ui/StyledApp';
 
 function App() {
   return (
     <>
       <GlobalStyles />
-      <StyledApp>
-        <header>
-          <Row type={RowType.vertical}>
-            <Row>
-              <Heading as="h1">The Wild Oasis</Heading>
-              <div>
-                <Heading as="h2">Check-in and Check-out</Heading>
-
-                <Button size="medium" variation="primary">
-                  Sing In
-                </Button>
-
-                <Button size="medium" variation="primary">
-                  Sing Up
-                </Button>
-              </div>
-            </Row>
-
-            <Row type={RowType.vertical}>
-              <Heading as="h3">Coming soon</Heading>
-
-              <form>
-                <Input placeholder="Search cabins" />
-                <Input placeholder="Number of Guests" />
-              </form>
-            </Row>
-          </Row>
-        </header>
-      </StyledApp>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="login" element={<Login />} />
+          <Route path="cabins" element={<Cabins />} />
+          <Route path="users" element={<Users />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="account" element={<Account />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
