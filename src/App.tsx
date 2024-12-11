@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Account from './pages/Account';
 import Bookings from './pages/Booking';
@@ -10,9 +12,17 @@ import Users from './pages/Users';
 import { GlobalStyles } from './styles/GlobalStyles';
 import AppLayout from './ui/AppLayout';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute refresh cache
+    },
+  },
+});
+
 function App() {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <GlobalStyles />
       <BrowserRouter>
         <Routes>
@@ -29,7 +39,8 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 

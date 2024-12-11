@@ -49,12 +49,16 @@ const variations = {
 };
 
 export const Button = styled.button<{
-  size?: 'small' | 'medium' | 'large';
-  variation?: 'primary' | 'secondary' | 'danger';
+  $size?: 'small' | 'medium' | 'large';
+  $variation?: 'primary' | 'secondary' | 'danger';
 }>`
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  ${(props) => sizes[props.size ?? 'medium']}
-  ${(props) => variations[props.variation ?? 'primary']}
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  ${(props) => sizes[props.$size ?? 'medium']}
+  ${(props) => variations[props.$variation ?? 'primary']};
 `;
