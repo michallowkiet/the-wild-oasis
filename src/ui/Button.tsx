@@ -55,8 +55,6 @@ export const Button = styled.button<{
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  display: flex;
-  align-items: center;
   gap: 0.5rem;
 
   ${(props) => sizes[props.$size ?? 'medium']}

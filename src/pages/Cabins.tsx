@@ -1,26 +1,12 @@
+import { useState } from 'react';
 import CabinTables from '../features/cabins/CabinTables';
+import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import Row, { RowType } from '../ui/Row';
+import CreateCabinForm from '../features/cabins/CreateCabinForm';
 
 const Cabins = () => {
-  // const [cabins, setCabins] = useState<Cabin[]>([]);
-  // const [error, setError] = useState<Error>(null);
-
-  // useEffect(() => {
-  //   const fetchCabins = async () => {
-  //     try {
-  //       const { cabins, error } = await getCabins();
-  //       if (error) throw error;
-  //       setCabins(cabins);
-  //     } catch (error: any) {
-  //       setError(error.message);
-  //     }
-  //   };
-
-  //   fetchCabins();
-  // }, []);
-
-  // if (error) return <div>{error.details}</div>;
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <>
@@ -28,9 +14,20 @@ const Cabins = () => {
         <Heading as="h1">All cabins</Heading>
         <p>Filter / Sort</p>
       </Row>
-      <Row>
+      <Row type={RowType.vertical}>
         <CabinTables />
+
+        <Button onClick={() => setShowForm((showForm) => !showForm)}>
+          Add new cabin
+        </Button>
+
+        {showForm && <CreateCabinForm />}
       </Row>
+
+      {/* <Row>
+        <Button>Add new cabin</Button>
+        <Button $variation="secondary">Add new cabins</Button>
+      </Row> */}
     </>
   );
 };
