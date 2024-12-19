@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       bookings: {
@@ -27,7 +52,7 @@ export type Database = {
           status: string | null
           total_price: number | null
           updated_at: string | null
-        }supabase
+        }
         Insert: {
           cabin_id?: number | null
           cabin_price?: number | null
@@ -88,9 +113,9 @@ export type Database = {
           discount: number | null
           id: number
           image: string | null
-          max_capacity: number | null
-          name: string | null
-          regular_price: number | null
+          max_capacity: number
+          name: string
+          regular_price: number
           updated_at: string | null
         }
         Insert: {
@@ -99,9 +124,9 @@ export type Database = {
           discount?: number | null
           id?: number
           image?: string | null
-          max_capacity?: number | null
-          name?: string | null
-          regular_price?: number | null
+          max_capacity: number
+          name: string
+          regular_price: number
           updated_at?: string | null
         }
         Update: {
@@ -110,9 +135,9 @@ export type Database = {
           discount?: number | null
           id?: number
           image?: string | null
-          max_capacity?: number | null
-          name?: string | null
-          regular_price?: number | null
+          max_capacity?: number
+          name?: string
+          regular_price?: number
           updated_at?: string | null
         }
         Relationships: []

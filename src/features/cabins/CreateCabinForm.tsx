@@ -1,60 +1,24 @@
-import styled from 'styled-components';
 import { Tables } from '../../../types/supabase';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { FieldErrors, useForm, ValidateResult } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { addCabin } from '../../services/apiCabins';
 import { Button } from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Form from '../../ui/Form';
+import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
 import Textarea from '../../ui/Textarea';
 
-type CabinFormFields = Tables<'cabins'>;
-
-const FormRow = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1.2fr 1fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const ErrorMsg = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`;
-
 const CreateCabinForm = () => {
-  const [errors, setErrors] = useState<FieldErrors<CabinFormFields>>();
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset } = useForm<CabinFormFields>();
+  const { register, handleSubmit, reset, getValues, formState } =
+    useForm<Tables<'cabins'>>();
+
+  const { errors } = formState;
+
   const { mutate, isPending } = useMutation({
     mutationFn: addCabin,
     onSuccess: () => {
@@ -68,37 +32,24 @@ const CreateCabinForm = () => {
     },
   });
 
-  const handleOnSubmit = (data: CabinFormFields) => {
+  const handleOnSubmit = (data: Tables<'cabins'>) => {
     mutate({
       ...data,
     });
   };
 
-  const handleOnError = (errorsForm: FieldErrors<CabinFormFields>) => {
-    console.log(errorsForm);
-    setErrors(errorsForm);
-  };
-
-  if (isPending)
-    return (
-      <FormRow>
-        <Spinner />
-      </FormRow>
-    );
+  if (isPending) return <Spinner />;
 
   return (
-    <Form onSubmit={handleSubmit(handleOnSubmit, handleOnError)}>
-      <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
+    <Form onSubmit={handleSubmit(handleOnSubmit)}>
+      <FormRow label="Cabin name" error={errors?.name}>
         <Input
           type="text"
           id="name"
           {...register('name', { required: 'This field is required' })}
         />
-        {errors?.name && <ErrorMsg>This field is required</ErrorMsg>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
+      <FormRow label="Maximum capacity" error={errors?.max_capacity}>
         <Input
           type="number"
           id="maxCapacity"
@@ -107,54 +58,47 @@ const CreateCabinForm = () => {
             min: { value: 1, message: 'Capacity should be at least 1' },
           })}
         />
-        {errors?.max_capacity && <ErrorMsg>This field is required</ErrorMsg>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
+      <FormRow label="Regular price" error={errors?.regular_price}>
         <Input
           type="number"
           id="regularPrice"
+          defaultValue={0}
           {...register('regular_price', {
-            required: true,
+            required: 'This field is required',
             min: { value: 1, message: 'Price should be at least 1' },
           })}
         />
-        {errors?.regular_price && <ErrorMsg>This field is required</ErrorMsg>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
+      <FormRow label="Discount" error={errors?.discount}>
         <Input
           type="number"
           id="discount"
           defaultValue={0}
           {...register('discount', {
-            required: true,
+            required: 'This field is required',
             validate: {
-              validateDiscount: (value: number | null): ValidateResult => {
-                if (value === null) return [''];
-                if (value >= 100) return ['Discount too high'];
-                return [''];
+              moreThenRegular: (fieldValue) => {
+                if (fieldValue === null) return true;
+                if (fieldValue >= getValues().regular_price)
+                  return 'Discount should be less than regular price';
+                return true;
               },
             },
           })}
         />
-        {errors?.discount && <ErrorMsg>This field is required</ErrorMsg>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="description">Description for website</Label>
+      <FormRow label="Description" error={errors?.description}>
         <Textarea
           id="description"
           defaultValue=""
-          {...register('description', { required: true })}
+          {...register('description', { required: 'This field is required' })}
         />
-        {errors?.description && <ErrorMsg>This field is required</ErrorMsg>}
       </FormRow>
-      <FormRow>
-        <Label htmlFor="image">Cabin photo</Label>
+      <FormRow label="Cabin photo" error={errors?.image}>
         <FileInput id="image" accept="image/*" {...register('image')} />
-        {errors?.image && <ErrorMsg>{errors.image.message}</ErrorMsg>}
       </FormRow>
-      errorsForm
+
       <FormRow>
         {/* type is an HTML attribute! */}
         <Button $variation="secondary" type="reset">
