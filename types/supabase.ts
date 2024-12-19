@@ -27,7 +27,7 @@ export type Database = {
           status: string | null
           total_price: number | null
           updated_at: string | null
-        }
+        }supabase
         Insert: {
           cabin_id?: number | null
           cabin_price?: number | null
