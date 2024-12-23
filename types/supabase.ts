@@ -108,33 +108,33 @@ export type Database = {
       }
       cabins: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string | null
           discount: number | null
           id: number
-          image: string | null
+          image: string
           max_capacity: number
           name: string
           regular_price: number
           updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           discount?: number | null
           id?: number
-          image?: string | null
+          image: string
           max_capacity: number
           name: string
           regular_price: number
           updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           discount?: number | null
           id?: number
-          image?: string | null
+          image?: string
           max_capacity?: number
           name?: string
           regular_price?: number

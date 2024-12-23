@@ -1,5 +1,3 @@
-import { Tables } from '../../../types/supabase';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -12,10 +10,22 @@ import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
 import Textarea from '../../ui/Textarea';
 
+export type CabinForm = {
+  created_at: string | null;
+  description: string | null;
+  discount: number | null;
+  id: number;
+  image: FileList;
+  max_capacity: number;
+  name: string;
+  regular_price: number;
+  updated_at: string | null;
+};
+
 const CreateCabinForm = () => {
   const queryClient = useQueryClient();
   const { register, handleSubmit, reset, getValues, formState } =
-    useForm<Tables<'cabins'>>();
+    useForm<CabinForm>();
 
   const { errors } = formState;
 
@@ -32,10 +42,8 @@ const CreateCabinForm = () => {
     },
   });
 
-  const handleOnSubmit = (data: Tables<'cabins'>) => {
-    mutate({
-      ...data,
-    });
+  const handleOnSubmit = (data: CabinForm) => {
+    mutate({ ...data });
   };
 
   if (isPending) return <Spinner />;
@@ -96,7 +104,11 @@ const CreateCabinForm = () => {
         />
       </FormRow>
       <FormRow label="Cabin photo" error={errors?.image}>
-        <FileInput id="image" accept="image/*" {...register('image')} />
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register('image', { required: 'This field is required' })}
+        />
       </FormRow>
 
       <FormRow>
