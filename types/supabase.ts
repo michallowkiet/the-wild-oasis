@@ -112,7 +112,7 @@ export type Database = {
           description: string | null
           discount: number | null
           id: number
-          image: string
+          image: string | null
           max_capacity: number
           name: string
           regular_price: number
@@ -123,7 +123,7 @@ export type Database = {
           description?: string | null
           discount?: number | null
           id?: number
-          image: string
+          image?: string | null
           max_capacity: number
           name: string
           regular_price: number
@@ -134,7 +134,7 @@ export type Database = {
           description?: string | null
           discount?: number | null
           id?: number
-          image?: string
+          image?: string | null
           max_capacity?: number
           name?: string
           regular_price?: number

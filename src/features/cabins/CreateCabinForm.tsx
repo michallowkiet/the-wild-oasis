@@ -1,7 +1,9 @@
+import { PostgrestResponseSuccess } from '@supabase/postgrest-js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { addCabin } from '../../services/apiCabins';
+import { Tables } from '../../../types/supabase';
+import { addCabin, editCabin } from '../../services/apiCabins';
 import { Button } from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Form from '../../ui/Form';
@@ -22,10 +24,19 @@ export type CabinForm = {
   updated_at: string | null;
 };
 
-const CreateCabinForm = () => {
+const CreateCabinForm = ({
+  cabinToEdit,
+  handleEditForm,
+}: {
+  cabinToEdit?: Tables<'cabins'>;
+  handleEditForm?: () => void;
+}) => {
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, getValues, formState } =
-    useForm<CabinForm>();
+  const { register, handleSubmit, reset, getValues, formState } = useForm<
+    CabinForm | Tables<'cabins'>
+  >({
+    defaultValues: cabinToEdit ?? {},
+  });
 
   const { errors } = formState;
 
@@ -42,11 +53,34 @@ const CreateCabinForm = () => {
     },
   });
 
-  const handleOnSubmit = (data: CabinForm) => {
-    mutate({ ...data });
+  const { mutate: cabinEdit, isPending: isPendingEdit } = useMutation<
+    PostgrestResponseSuccess<null>,
+    Error,
+    Tables<'cabins'>,
+    unknown
+  >({
+    mutationFn: editCabin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cabins'] });
+      toast.success('Cabin successfully updated');
+      handleEditForm?.();
+      reset();
+    },
+    onError: (err) => {
+      queryClient.invalidateQueries({ queryKey: ['cabins'] });
+      toast.error(err.message);
+    },
+  });
+
+  const handleOnSubmit = (data: CabinForm | Tables<'cabins'>) => {
+    if (cabinToEdit) {
+      cabinEdit({ ...(data as Tables<'cabins'>), id: cabinToEdit.id });
+    } else {
+      mutate({ ...(data as CabinForm) });
+    }
   };
 
-  if (isPending) return <Spinner />;
+  if (isPending || isPendingEdit) return <Spinner />;
 
   return (
     <Form onSubmit={handleSubmit(handleOnSubmit)}>
@@ -71,7 +105,6 @@ const CreateCabinForm = () => {
         <Input
           type="number"
           id="regularPrice"
-          defaultValue={0}
           {...register('regular_price', {
             required: 'This field is required',
             min: { value: 1, message: 'Price should be at least 1' },
@@ -82,16 +115,13 @@ const CreateCabinForm = () => {
         <Input
           type="number"
           id="discount"
-          defaultValue={0}
           {...register('discount', {
             required: 'This field is required',
             validate: {
-              moreThenRegular: (fieldValue) => {
-                if (fieldValue === null) return true;
-                if (fieldValue >= getValues().regular_price)
-                  return 'Discount should be less than regular price';
-                return true;
-              },
+              moreThenRegular: (fieldValue) =>
+                (fieldValue !== null &&
+                  fieldValue <= getValues().regular_price) ||
+                'Discount should be less than regular price',
             },
           })}
         />
@@ -99,7 +129,6 @@ const CreateCabinForm = () => {
       <FormRow label="Description" error={errors?.description}>
         <Textarea
           id="description"
-          defaultValue=""
           {...register('description', { required: 'This field is required' })}
         />
       </FormRow>
@@ -107,7 +136,9 @@ const CreateCabinForm = () => {
         <FileInput
           id="image"
           accept="image/*"
-          {...register('image', { required: 'This field is required' })}
+          {...register('image', {
+            required: cabinToEdit ? false : 'This field is required',
+          })}
         />
       </FormRow>
 
@@ -116,7 +147,7 @@ const CreateCabinForm = () => {
         <Button $variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Add cabin</Button>
+        <Button>{cabinToEdit ? 'Update cabin' : 'Add cabin'}</Button>
       </FormRow>
     </Form>
   );

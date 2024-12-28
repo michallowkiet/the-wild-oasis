@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import styled from 'styled-components';
 import { Tables } from '../../../types/supabase';
@@ -6,6 +7,7 @@ import { deleteCabin } from '../../services/apiCabins';
 import { Button } from '../../ui/Button';
 import SpinnerMini from '../../ui/SpinnerMini';
 import { formatCurrency } from '../../utils/helpers';
+import CreateCabinForm from './CreateCabinForm';
 
 const TableRow = styled.div`
   display: grid;
@@ -47,9 +49,14 @@ const Discount = styled.div`
 `;
 
 const CabinRow = ({ cabin }: { cabin: Tables<'cabins'> }) => {
+  const [isDeleting, setIsDeleting] = useState(false); // Delete Cabin
+  const [showEditForm, setShowEditForm] = useState(false);
   const queryClient = useQueryClient();
-  const { isPending, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: deleteCabin,
+    onMutate: () => {
+      setIsDeleting(true);
+    },
     onSuccess: () => {
       toast.success('Cabin successfully deleted');
       queryClient.invalidateQueries({ queryKey: ['cabins'] });
@@ -63,7 +70,11 @@ const CabinRow = ({ cabin }: { cabin: Tables<'cabins'> }) => {
     mutate(cabin.id.toString());
   };
 
-  if (isPending)
+  const handleEdit = () => {
+    setShowEditForm((show) => !show);
+  };
+
+  if (isDeleting)
     return (
       <TableRow>
         <SpinnerMini />
@@ -71,16 +82,26 @@ const CabinRow = ({ cabin }: { cabin: Tables<'cabins'> }) => {
     );
 
   return (
-    <TableRow>
-      <Img src={cabin.image ?? ''} />
-      <Cabin>{cabin.name}</Cabin>
-      <div>{cabin.max_capacity}</div>
-      <Price>{formatCurrency(cabin.regular_price ?? 0)}</Price>
-      <Discount>{formatCurrency(cabin.discount ?? 0)}</Discount>
-      <Button $variation="danger" onClick={handleDelete}>
-        Delete
-      </Button>
-    </TableRow>
+    <>
+      <TableRow>
+        <Img src={cabin.image ?? ''} />
+        <Cabin>{cabin.name}</Cabin>
+        <div>{cabin.max_capacity}</div>
+        <Price>{formatCurrency(cabin.regular_price ?? 0)}</Price>
+        <Discount>{formatCurrency(cabin.discount ?? 0)}</Discount>
+        <div>
+          <Button $variation="primary" onClick={handleEdit}>
+            Edit
+          </Button>
+          <Button $variation="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </div>
+      </TableRow>
+      {showEditForm && (
+        <CreateCabinForm cabinToEdit={cabin} handleEditForm={handleEdit} />
+      )}
+    </>
   );
 };
 
