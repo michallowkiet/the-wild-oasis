@@ -2,11 +2,6 @@ import { Tables } from '../../types/supabase';
 import { CabinForm } from '../features/cabins/CreateCabinForm';
 import { supabase } from './supabase';
 
-interface StorageDataResponse {
-  path: string;
-  fullPath: string;
-}
-
 const getCabins = async () => {
   const response = await supabase.from('cabins').select('*');
 
