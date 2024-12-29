@@ -1,9 +1,5 @@
-import { PostgrestResponseSuccess } from '@supabase/postgrest-js';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { Tables } from '../../../types/supabase';
-import { addCabin, editCabin } from '../../services/apiCabins';
 import { Button } from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Form from '../../ui/Form';
@@ -11,6 +7,8 @@ import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
 import Textarea from '../../ui/Textarea';
+import { UseAddCabin } from './useAddCabin';
+import { UseEditCabin } from './useEditCabin';
 
 export type CabinForm = {
   created_at: string | null;
@@ -31,7 +29,6 @@ const CreateCabinForm = ({
   cabinToEdit?: Tables<'cabins'>;
   handleEditForm?: () => void;
 }) => {
-  const queryClient = useQueryClient();
   const { register, handleSubmit, reset, getValues, formState } = useForm<
     CabinForm | Tables<'cabins'>
   >({
@@ -40,47 +37,34 @@ const CreateCabinForm = ({
 
   const { errors } = formState;
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: addCabin,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cabins'] });
-      toast.success('Cabin successfully created');
-      reset();
-    },
-    onError: (err) => {
-      queryClient.invalidateQueries({ queryKey: ['cabins'] });
-      toast.error(err.message);
-    },
-  });
+  const { addCabin, isAddCabinPending } = UseAddCabin();
 
-  const { mutate: cabinEdit, isPending: isPendingEdit } = useMutation<
-    PostgrestResponseSuccess<null>,
-    Error,
-    Tables<'cabins'>,
-    unknown
-  >({
-    mutationFn: editCabin,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cabins'] });
-      toast.success('Cabin successfully updated');
-      handleEditForm?.();
-      reset();
-    },
-    onError: (err) => {
-      queryClient.invalidateQueries({ queryKey: ['cabins'] });
-      toast.error(err.message);
-    },
-  });
+  const { editCabin, isEditCabinPending } = UseEditCabin();
 
   const handleOnSubmit = (data: CabinForm | Tables<'cabins'>) => {
     if (cabinToEdit) {
-      cabinEdit({ ...(data as Tables<'cabins'>), id: cabinToEdit.id });
+      editCabin(
+        { ...(data as Tables<'cabins'>), id: cabinToEdit.id },
+        {
+          onSuccess: () => {
+            handleEditForm?.();
+            reset();
+          },
+        },
+      );
     } else {
-      mutate({ ...(data as CabinForm) });
+      addCabin(
+        { ...(data as CabinForm) },
+        {
+          onSuccess: () => {
+            reset();
+          },
+        },
+      );
     }
   };
 
-  if (isPending || isPendingEdit) return <Spinner />;
+  if (isAddCabinPending || isEditCabinPending) return <Spinner />;
 
   return (
     <Form onSubmit={handleSubmit(handleOnSubmit)}>

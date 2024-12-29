@@ -1,13 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 import styled from 'styled-components';
 import { Tables } from '../../../types/supabase';
-import { deleteCabin } from '../../services/apiCabins';
 import { Button } from '../../ui/Button';
 import SpinnerMini from '../../ui/SpinnerMini';
 import { formatCurrency } from '../../utils/helpers';
 import CreateCabinForm from './CreateCabinForm';
+import { useDeleteCabin } from './useDeleteCabin';
 
 const TableRow = styled.div`
   display: grid;
@@ -51,23 +49,11 @@ const Discount = styled.div`
 const CabinRow = ({ cabin }: { cabin: Tables<'cabins'> }) => {
   const [isDeleting, setIsDeleting] = useState(false); // Delete Cabin
   const [showEditForm, setShowEditForm] = useState(false);
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: deleteCabin,
-    onMutate: () => {
-      setIsDeleting(true);
-    },
-    onSuccess: () => {
-      toast.success('Cabin successfully deleted');
-      queryClient.invalidateQueries({ queryKey: ['cabins'] });
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+
+  const { deleteCabin } = useDeleteCabin({ setIsDeleting });
 
   const handleDelete = () => {
-    mutate(cabin.id.toString());
+    deleteCabin(cabin.id.toString());
   };
 
   const handleEdit = () => {
